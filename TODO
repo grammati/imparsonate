@@ -1,0 +1,20 @@
+# Imparsonte - Brain-dump page.
+
+###
+Whitespace - assumptions about where whitespace is allowed and/or required are hard-coded.
+I want it to be configurable without being intrusive and uglifying the rule defs.
+Eg:
+:rule [:name :w* ":" :w+ :value]
+where :w+, :w*, etc could be "built-in" rules for matching whitespace explicity.
+The way it's done now (baked-in), matching well-formed input seems to work reasonably, but bad input would probably matched too in many cases.
+
+###
+Matchers should take and return some sort of parser-state object. Protocol? probably. Something that keeps track of the input (string, stream, etc.) and the result. There is a glimmer of that now, but I really ony work with strings so far.
+The parser-state thingy should also keep track of line and column numbers where things matched. Lots of details to work out.
+
+###
+Lazy consumption - what if I want to be able to, for example, parse a JSON structure that looks like this:
+[{"id":1, "name":"name1"}, {"id":2, "name":"name2"}, ..., {"id:63782506, "name":"name63782506"}]
+without running out of memory - return a lazy sequence of maps, and only consume the text in the file as the sequence is consumeed?
+
+
