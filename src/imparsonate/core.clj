@@ -11,7 +11,7 @@
 
 (defn parse-error [msg]
   (throw (Exception. msg))) ;; FIXME
-  
+ 
   
 (defprotocol ParserInput
   (skip-ignorable [this]))
@@ -140,13 +140,14 @@
       {::rule rules-in ::handler handler})))
 
 (defmethod rule IFn [f handler]
-  (if (identical? handler identity)
-    f   ;; (rule existing-rule) is idempotent
-    (with-meta
-      (fn [input]
-        (if-let [[matched tail] (f input)]
-          [(handler matched) tail]))
-      {::rule f ::handler handler})))
+  (let [f (or (::root-rule (meta f)) f)]  ;if f is itself a parser, use its root rule
+    (if (identical? handler identity)
+      f
+      (with-meta
+        (fn [input]
+          (if-let [[matched tail] (f input)]
+            [(handler matched) tail]))
+        {::rule f ::handler handler}))))
 
 (prefer-method rule Keyword IFn)
 (prefer-method rule IPersistentVector IFn)
@@ -217,7 +218,7 @@
             (if (empty? (triml tail))
               result
               (parse-error (str "Unconsumed non-whitespace characters: " tail))))))
-      {::ruleset ruleset})))
+      {::ruleset ruleset ::root-rule root-rule})))
             
 (defn- make-rulemap 
   "Slurp a flat sequence of names, rule-defs, and optional handlers into a map,
