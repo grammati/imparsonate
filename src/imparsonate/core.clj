@@ -10,7 +10,7 @@
   (if *debug* (apply prn msgs)))
 
 (defn parse-error [msg]
-  (throw (Exception. msg))) ;; FIXME
+  (throw (Exception. (str msg)))) ;; FIXME
  
   
 (defprotocol ParserInput
@@ -31,7 +31,7 @@
 (defmethod rule :default [pattern]
   (rule pattern identity))
 
-(defmethod rule String [s handler]
+(defmethod rule String [^String s handler]
   (let [first-char  (first s)
         last-char   (str (last s))
         identifier? (re-find #"\w" last-char)   ; FIXME - this is a nasty hack - need a more flexible way to tokenize...
@@ -43,7 +43,7 @@
     (with-meta
       (fn [input]
         (debug "Calling string rule: " s)
-        (let [input (skip-ignorable input)]
+        (let [^String input (skip-ignorable input)]
           (if (.startsWith input s)
             (let [tail (.substring input (.length s))]
               (if (checker tail)
@@ -54,18 +54,18 @@
   (rule (re-pattern (str (Pattern/quote s) "\\b")) handler)) ; ??? much shorter, cleaner code, but it doesn't work... :(
 
   
-(defn anchor-left [re]
+(defn anchor-left [^Pattern re]
   (re-pattern (str "^(?:" (.pattern re) ")")))
 
-(defmethod rule Pattern [pattern handler]
+(defmethod rule Pattern [^Pattern pattern handler]
   (let [pattern     (anchor-left pattern)           ; FIXME - write re-find equivalent that calls .lookingAt? Or it this just as good?
         no-handler? (identical? handler identity)]
     (with-meta
       (fn [input] 
         (debug "Calling pattern rule: " pattern)
-        (let [input (skip-ignorable input)]
+        (let [^String input (skip-ignorable input)]
           (if-let [m (re-find pattern input)]
-            (let [matched (if (string? m) m (m 0))
+            (let [^String matched (if (string? m) m (m 0))
                   tail (.substring input (.length matched))
                   result (if (or (string? m) no-handler?)
                            (handler m)
