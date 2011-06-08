@@ -14,6 +14,7 @@ Status: alpha (at best)
 
 Here is a JSON parser (well, almost... close enough for an example):
 
+```clojure
     (defparser json-parser
       :root     #{:array :object}
       :array    ["[" (list-of :any) "]"]    vec
@@ -30,6 +31,7 @@ Here is a JSON parser (well, almost... close enough for an example):
 
     (json-parser "{\"foo\": 23, \"bar\": [42, null, true]}")
     ;; => {"foo" 23 "bar" [42 nil true]}
+```
     
 Let's walk through that example step by step.
 
