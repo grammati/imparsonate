@@ -3,9 +3,10 @@
            [java.util.regex Pattern])
   (:use [clojure [string :only [triml]]]))
 
-(declare *parser* *modifiers*)
+(declare ^:dynamic *parser*)
+(declare ^:dynamic *modifiers*)
 
-(def *debug* false)
+(def ^:dynamic *debug* false)
 (defn debug [& msgs]
   (if *debug* (apply prn msgs)))
 
@@ -182,7 +183,7 @@
         
 (def optional zero-or-one) ; alias
 
-(def *modifiers* {
+(def ^:dynamic *modifiers* {
   :* zero-or-more
   :+ one-or-more
   :? zero-or-one

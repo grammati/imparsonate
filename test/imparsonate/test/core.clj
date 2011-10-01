@@ -109,13 +109,13 @@
   (let [p json-parser]
     (is (= (p "{}") {}))
     (is (= (p "[]") []))
-    (is (= (p "[23]") [23]))
+    (is (= (p "[23]") [23.0]))
     (is (= (p "[23,]") nil))
     (is (= (p "[null, true, false]") [nil true false]))
     (is (= (p "[{}]") [{}]))
-    (is (= (p "{\"foo\": 23}") {"foo" 23}))
+    (is (= (p "{\"foo\": 23}") {"foo" 23.0}))
     (is (= (p "{\"foo\": 23, \"bar\": [\"hello\", \"world\"]}")
-           {"foo" 23 "bar" ["hello" "world"]}))
+           {"foo" 23.0 "bar" ["hello" "world"]}))
     ))
 
 
